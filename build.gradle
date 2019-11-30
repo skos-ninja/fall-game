@@ -15,6 +15,7 @@ switch (OperatingSystem.current()) {
         break
     case OperatingSystem.MAC_OS:
         project.ext.lwjglNatives = "natives-macos"
+        applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
         break
     case OperatingSystem.WINDOWS:
         project.ext.lwjglNatives = "natives-windows"
@@ -26,8 +27,6 @@ apply plugin: 'application'
 
 sourceCompatibility = 1.8
 project.ext.lwjglVersion = "3.2.3"
-
-applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
 
 repositories {
     mavenCentral()
