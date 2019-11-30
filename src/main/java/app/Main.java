@@ -7,28 +7,29 @@ public class Main {
     private static Display display;
     private static Engine engine;
 
+    private static final int width = 500;
+    private static final int height = 900;
+
     public static void main(String[] args) {
         engine = new Engine();
-        engine.init();
+        engine.init(width, height);
 
-        display = new Display(900, 500, "Fall game");
+        display = new Display(width, height, "Don't hit the block");
 
         display.setFrameRenderer((window) -> {
-            // Frame render called
-            System.out.println("Frame render called");
-
             engine.render(window);
         });
 
         display.setKeyboardHandler((key, scancode, action, mods) -> {
-            // Keyboard input detected
-            System.out.println("Keyboard press called: " + key);
-
             engine.inputHandler(key, scancode, action, mods);
         });
 
         display.init();
-        display.render();
+        try {
+            display.render();
+        } catch (InterruptedException e) {
+            // Ignored
+        }
     }
 
 }

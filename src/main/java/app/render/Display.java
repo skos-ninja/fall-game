@@ -93,23 +93,31 @@ public class Display {
         return (!glfwWindowShouldClose(window));
     }
 
-    public void render() {
+    public void render() throws InterruptedException {
         GL.createCapabilities();
 
         // Set default white background
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, this.width, 0, this.height, 1, -1);
+        glMatrixMode(GL_MODELVIEW);
+
+        long sleepTime = 1000L / 60L;
+
         // TODO: set a frame render limit
         while (this.isRendering()) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            glfwSwapBuffers(window);
-
             if (this.renderer != null) {
                 this.renderer.invoke(window);
             }
 
+            glfwSwapBuffers(window);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
             glfwPollEvents();
+
+            Thread.sleep(sleepTime);
         }
     }
 }
