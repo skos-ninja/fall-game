@@ -1,6 +1,7 @@
 package app.engine;
 
 import app.engine.entitites.Block;
+import app.engine.entitites.Entity;
 import app.engine.entitites.Player;
 import org.lwjgl.opengl.GL11;
 
@@ -8,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 
 public class Engine {

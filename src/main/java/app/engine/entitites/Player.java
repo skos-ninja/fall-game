@@ -1,7 +1,5 @@
 package app.engine.entitites;
 
-import app.engine.Entity;
-
 import static org.lwjgl.opengl.GL11.*;
 
 public class Player extends Entity {

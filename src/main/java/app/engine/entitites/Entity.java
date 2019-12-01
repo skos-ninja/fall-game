@@ -1,4 +1,4 @@
-package app.engine;
+package app.engine.entitites;
 
 public abstract class Entity {
     // Give coords for our entity
