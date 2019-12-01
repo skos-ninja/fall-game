@@ -5,19 +5,20 @@ import app.engine.Entity;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Player extends Entity {
-    final int leftKey = 263;
-    final int rightKey = 262;
-    final int step = 10;
-    final int size = 25;
+    private final int leftKey = 263;
+    private final int rightKey = 262;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int step = 10;
+    private final int size = 25;
 
-    int x = 0;
-    int y = 0;
+    private int x;
+    private int y;
 
-    int minLeft = 0;
-    int maxRight = 0;
+    private int minLeft = 0;
+    private int maxRight = 0;
 
-    boolean leftDown = false;
-    boolean rightDown = false;
+    private boolean leftDown = false;
+    private boolean rightDown = false;
 
     public Player(int width, int height) {
         this.x = width / 2; // Start in the center of the screen
@@ -35,6 +36,10 @@ public class Player extends Entity {
     @Override
     public int Y() {
         return y;
+    }
+
+    public int Size() {
+        return this.size;
     }
 
     @Override

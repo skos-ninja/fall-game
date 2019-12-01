@@ -12,14 +12,15 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Display {
-    int width;
-    int height;
-    String title;
+    private int width;
+    private int height;
+    private String title;
+    private boolean shouldRender = true;
 
-    long window;
+    private long window;
 
-    DrawCallback renderer;
-    KeyboardCallback inputHandler;
+    private DrawCallback renderer;
+    private KeyboardCallback inputHandler;
 
     public Display(int width, int height, String title) {
         this.width = width;
@@ -79,6 +80,15 @@ public class Display {
 
         // Make the window visible
         glfwShowWindow(window);
+        GL.createCapabilities();
+
+        String glVersion = glGetString(GL_VERSION);
+        System.out.println("GL Version: " + glVersion);
+    }
+
+    public void destroy() {
+        glfwSetWindowShouldClose(window, true);
+        glfwDestroyWindow(this.window);
     }
 
     public void setKeyboardHandler(KeyboardCallback cb) {
@@ -89,13 +99,15 @@ public class Display {
         this.renderer = cb;
     }
 
+    public void setShouldRender(boolean should) {
+        this.shouldRender = should;
+    }
+
     public boolean isRendering() {
         return (!glfwWindowShouldClose(window));
     }
 
-    public void render() throws InterruptedException {
-        GL.createCapabilities();
-
+    public void render() {
         // Set default white background
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -104,10 +116,8 @@ public class Display {
         glOrtho(0, this.width, 0, this.height, 1, -1);
         glMatrixMode(GL_MODELVIEW);
 
-        long sleepTime = 1000L / 60L;
-
         // TODO: set a frame render limit
-        while (this.isRendering()) {
+        while (this.isRendering() && this.shouldRender) {
             if (this.renderer != null) {
                 this.renderer.invoke(window);
             }
@@ -116,8 +126,8 @@ public class Display {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             glfwPollEvents();
-
-            Thread.sleep(sleepTime);
         }
     }
+
+
 }

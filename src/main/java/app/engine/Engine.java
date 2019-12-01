@@ -41,7 +41,7 @@ public class Engine {
         this.blocks.removeAll(blocksForDelete);
 
         // Wait 10 ticks before spawning the next set of blocks
-        if (ticksSinceLastSpawn >= 10) {
+        if (ticksSinceLastSpawn >= 20) {
             // Sometimes we should spawn multiple!
             int shouldSpawnMultiple = random.nextInt(100);
             int toSpawn = 1;
@@ -57,15 +57,42 @@ public class Engine {
             ticksSinceLastSpawn = 0;
         }
 
-        if (detectCollision()) {
-
-        }
-
         ticksSinceLastSpawn++;
     }
 
-    private boolean detectCollision() {
-        return true;
+    public boolean detectCollision() {
+        int x = this.player.X();
+        int y = this.player.Y();
+        int size = this.player.Size();
+
+        int playerLeft = x - size;
+        int playerRight = x + size;
+
+        boolean hasHit = false;
+        for (Block block : this.blocks) {
+            // Ignore the block as it hasn't reach the required height
+            if (block.Y() <= y - size) {
+                continue;
+            }
+
+            int blockX = block.X();
+            int blockSize = block.Size();
+
+            int blockLeft = blockX - blockSize;
+            int blockRight = blockX + blockSize;
+
+            if (blockLeft >= playerLeft && blockLeft <= playerRight) {
+                hasHit = true;
+                break;
+            }
+
+            if (blockRight <= playerRight && blockRight >= playerLeft) {
+                hasHit = true;
+                break;
+            }
+        }
+
+        return hasHit;
     }
 
     private List<Entity> getEntities() {
@@ -98,7 +125,7 @@ public class Engine {
         this.getEntities().forEach(Entity::Render);
     }
 
-    public void inputHandler(int key, int scancode, int action, int mods) {
+    public void inputHandler(int key, int action) {
         this.getEntities().forEach(entity -> {
             // Key down or hold
             if (action == 1 || action == 2) {
