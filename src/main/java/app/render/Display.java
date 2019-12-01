@@ -15,7 +15,6 @@ public class Display {
     private int width;
     private int height;
     private String title;
-    private boolean shouldRender = true;
 
     private long window;
 
@@ -99,10 +98,6 @@ public class Display {
         this.renderer = cb;
     }
 
-    public void setShouldRender(boolean should) {
-        this.shouldRender = should;
-    }
-
     public boolean isRendering() {
         return (!glfwWindowShouldClose(window));
     }
@@ -117,7 +112,7 @@ public class Display {
         glMatrixMode(GL_MODELVIEW);
 
         // TODO: set a frame render limit
-        while (this.isRendering() && this.shouldRender) {
+        while (this.isRendering()) {
             if (this.renderer != null) {
                 this.renderer.invoke(window);
             }

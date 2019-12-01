@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
+
 public class Engine {
     private int width;
     private int height;
@@ -15,14 +18,19 @@ public class Engine {
     private Random random = new Random();
     private int ticksSinceLastSpawn = 0;
 
+    private boolean paused = false;
+    private boolean finished = false;
+
     private Player player;
     private List<Block> blocks;
+    private int score = 0;
 
-    public Engine() {
-        this.blocks = new ArrayList<>();
-    }
+    public void tick() {
+        // Skip the tick as the game is either paused or finished
+        if (this.finished || this.paused) {
+            return;
+        }
 
-    private void tick() {
         // Run our entity ticker here
         this.getEntities().forEach(Entity::Tick);
 
@@ -58,6 +66,12 @@ public class Engine {
         }
 
         ticksSinceLastSpawn++;
+
+        if (this.detectCollision()) {
+            this.finished = true;
+        } else {
+            this.score++;
+        }
     }
 
     public boolean detectCollision() {
@@ -78,7 +92,7 @@ public class Engine {
             int blockX = block.X();
             int blockSize = block.Size();
 
-            int blockLeft = blockX - blockSize;
+            int blockLeft = blockX;
             int blockRight = blockX + blockSize;
 
             if (blockLeft >= playerLeft && blockLeft <= playerRight) {
@@ -107,16 +121,31 @@ public class Engine {
         this.width = width;
         this.height = height;
 
+        this.paused = false;
+        this.finished = false;
+        this.score = 0;
+        this.ticksSinceLastSpawn = 0;
+
         // We pass in the width and height to ensure we start
         // in the right position for the player
         this.player = new Player(width, height);
+
+        this.blocks = new ArrayList<>();
     }
 
     public void render(long window) {
-        // Run a tick loop now
-        // TODO: cap this ticker to now allow duplicate frames
-        this.tick();
-
+        // Set our window title
+        if (this.finished) {
+            glfwSetWindowTitle(window, "Final score: " + this.score);
+            if (this.paused) {
+                // If paused whilst finish then reset the game
+                this.init(this.width, this.height);
+            }
+        } else if (this.paused) {
+            glfwSetWindowTitle(window, "PAUSED");
+        } else {
+            glfwSetWindowTitle(window, "Don't hit the block");
+        }
 
         // Set a standard drawing colour here
         GL11.glColor3f(0, 0, 0);
@@ -126,6 +155,16 @@ public class Engine {
     }
 
     public void inputHandler(int key, int action) {
+        // If escape key
+        if (key == 256) {
+            // If key down
+            // set the opposite pause state
+            if (action == 1) this.paused = !this.paused;
+
+            // Don't pass the escape key to the entities
+            return;
+        }
+
         this.getEntities().forEach(entity -> {
             // Key down or hold
             if (action == 1 || action == 2) {
